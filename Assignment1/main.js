@@ -1,139 +1,155 @@
 "use strict";
+//Chọn các phần tử
+const idEl = document.getElementById("input-id");
+const nameEl = document.getElementById("input-name");
+const ageEl = document.getElementById("input-age");
+const typeEl = document.getElementById("input-type");
+const weightEl = document.getElementById("input-weight");
+const lengthEl = document.getElementById("input-length");
+const colorEl = document.getElementById("input-color-1");
+const breedEl = document.getElementById("input-breed");
+const vaccinatedEl = document.getElementById("input-vaccinated");
+const dewormedEl = document.getElementById("input-dewormed");
+const sterilizedEl = document.getElementById("input-sterilized");
 
-//Khởi tạo giá trị
-const submitBtn = document.getElementById("submit-btn");
-const idInput = document.getElementById("input-id");
-const nameInput = document.getElementById("input-name");
-const ageInput = document.getElementById("input-age");
-const typeInput = document.getElementById("input-type");
-const weightInput = document.getElementById("input-weight");
-const lengthInput = document.getElementById("input-length");
-const colorInput = document.getElementById("input-color");
-const breedInput = document.getElementById("input-breed");
-const vaccinatedInput = document.getElementById("input-vaccinated");
-const dewoemedInput = document.getElementById("input-dewormed");
-const sterilizedInput = document.getElementById("input-sterilized");
-const tableBodyEl = document.getElementById("tbody");
-const deleteBtn = document.getElementById("btn-danger");
+const btnSubmit = document.getElementById("submit-btn");
+const btnHealthy = document.getElementById("healthy-btn");
+const btnDelete = document.getElementsByClassName("btn-danger");
 
-//Tạo petArr
-const petArr = [];
+const tbodyEl = document.getElementById("tbody");
 
-// Bắt sự kiện vào nút submit
-submitBtn.addEventListener("click", function () {
-  //console.log(data);
-  //Validate dữ liệu
-  validateData();
+// Chỉnh hiển thị ngày
+let today = new Date();
+let d = today.getDate();
+let mm = today.getMonth() + 1;
+let yyyy = today.getFullYear();
+today = `${d}/${mm}/${yyyy}`;
 
-  //Nếu không gặp lỗi gì thì thêm vào mảng
-  const validate = validateData(data);
-  if (validate) {
+// tạo hiển thị ban đầu
+const init = function () {
+  idEl.value = "";
+  nameEl.value = "";
+  ageEl.value = "";
+  typeEl.value = "";
+  weightEl.value = "";
+  lengthEl.value = "";
+  colorEl.value = "";
+  breedEl.value = "";
+  vaccinatedEl.checked = false;
+  dewormedEl.checked = false;
+  sterilizedEl.checked = false;
+};
+
+// Bắt sự kiện 'Click' vào nút Submit
+btnSubmit.addEventListener("click", function () {
+  // Lấy dữ liệu từ các Input form
+  const data = {
+    ID: idEl.value,
+    name: nameEl.value,
+    age: parseInt(ageEl.value),
+    type: typeEl.value,
+    weight: parseInt(weightEl.value),
+    length: parseInt(lengthEl.value),
+    color: colorEl.value,
+    breed: breedEl.value,
+    vaccinated: vaccinatedEl.checked,
+    dewormed: dewormedEl.checked,
+    sterilized: sterilizedEl.checked,
+    date: today,
+  };
+  // Hiển thị danh sách thú cưng
+  let addPet = function () {
+    const petArr = [];
     petArr.push(data);
-    clearInput();
-    renderTable(petArr);
+    const renderTableData = function (x) {
+      for (let i = 0; i < x.length; i++) {
+        let vaccinatedText = x[i].vaccinated
+          ? "bi bi-check-circle-fill"
+          : "bi bi-x-circle-fill";
+        let dewormedText = x[i].dewormed
+          ? "bi bi-check-circle-fill"
+          : "bi bi-x-circle-fill";
+        let sterilizedText = x[i].sterilized
+          ? "bi bi-check-circle-fill"
+          : "bi bi-x-circle-fill";
+        const row = document.createElement("tr");
+        row.innerHTML = `<th scope = "row"> ${x[i].ID}</th>
+        <td>${x[i].name}</td>
+        <td>${x[i].age}</td>
+        <td>${x[i].type}</td>
+        <td>${x[i].weight} kg</td>
+        <td>${x[i].length} cm</td>
+        <td>${x[i].breed}</td>
+        <td>
+      <i class="bi bi-square-fill" style="color: ${x[i].color}"></i>
+    </td>
+    <td><i class="${vaccinatedText}"></i></td>
+    <td><i class="${dewormedText}"></i></td>
+    <td><i class="${sterilizedText}"></i></td>
+    <td>${x[i].date}</td>
+    <td>
+      <button type="button" class="btn btn-danger">Delete</button>
+    </td>`;
+        tbodyEl.appendChild(row);
+      }
+    };
+    renderTableData(petArr);
+    // Xóa thông tin từ input form
+    init();
+  };
+  // Validate dữ liệu hợp lệ
+  // Kiểm tra ID không được trùng với các thú cưng còn lại
+  let chk = false;
+  for (let i = 0; i < tbodyEl.rows.length; i++) {
+    if (idEl.value === tbodyEl.rows[i].cells[0].textContent) {
+      chk = true;
+      break;
+    }
+  }
+  // Kiểm tra các trường có bị nhập thiếu hay không
+  if (chk) {
+    alert("ID must unique!");
+    return;
+  } else if (idEl.value.trim().length === 0) {
+    alert("Please add ID!");
+    return;
+  } else if (nameEl.value.trim().length === 0) {
+    alert("Please add name of a pet!");
+    return;
+  } else if (ageEl.value.trim().length === 0) {
+    alert("Please add age!");
+    return;
+  } else if (weightEl.value.trim().length === 0) {
+    alert("Please add weight!");
+    return;
+  } else if (lengthEl.value.trim().length === 0) {
+    alert("Please add length!");
+    return;
+  } else if (typeEl.selectedIndex === 0) {
+    alert("Please select type!");
+    return;
+  } else if (breedEl.selectedIndex === 0) {
+    alert("Please select breed!");
+    return;
+  }
+  // Kiểm tra các thông tin nằm trong khoảng cho phép và in thông tin pet ra bảng
+  else if (ageEl.value < 1 || ageEl.value > 15) {
+    alert("Age must be between 1 and 15");
+    return;
+  } else if (weightEl.value < 1 || weightEl.value > 15) {
+    alert("Weight must be between 1 and 15");
+    return;
+  } else if (lengthEl.value < 1 || lengthEl.value > 100) {
+    alert("Length must be between 1 and 100");
+    return;
+  } else {
+    addPet();
   }
 });
 
-//Lấy dữ liệu từ inputForm
-const data = {
-  id: idInput.value,
-  name: nameInput.value,
-  age: parseInt(ageInput.value),
-  type: typeInput.value,
-  weight: parseInt(weightInput.value),
-  length: parseInt(lengthInput.value),
-  color: colorInput,
-  breed: breedInput.value,
-  vaccinated: vaccinatedInput.checked,
-  dewoemed: dewoemedInput.checked,
-  sterilized: sterilizedInput.checked,
-  date: new Date(),
-};
-console.log(data);
-
-//Validate dữ liệu hợp lệ
-const validateData = function () {
-  //Không có trường nào bị nhập thiếu
-  if (
-    data.idInput === "" &&
-    data.nameInput === "" &&
-    data.ageInput === "" &&
-    data.weightInput === "" &&
-    data.lengthInput === ""
-  ) {
-    alert("Please fill all information!");
+// Xóa 1 thú cưng
+tbodyEl.addEventListener("click", function (e) {
+  if (e.target.classList.contains("btn-danger")) {
+    e.target.parentElement.parentElement.remove();
   }
-  //Giá trị id không trùng với các id còn lại
-  if (idInput == data.id) {
-    alert("ID must be unique");
-  }
-  //Age nhập trong khoảng từ 1 -> 15
-  if (ageInput.value < 1 && ageInput.value > 15) {
-    alert("Age must be between 1 and 15!");
-  }
-  //Weight chỉ dc nhập từ 1-15
-  if (weightInput.value < 1 && weightInput.value > 15) {
-    alert("Weight must be between 1 and 15!");
-  }
-  //Lenght chỉ dc nhập từ 1-100
-  if (weightInput.value < 1 && weightInput.value > 100) {
-    alert("Height must be between 1 and 100!");
-  }
-  //Bắt buộc chọn giá trị cho trường Type
-  if (typeInput.value == "Select Type") {
-    alert("Please select a type");
-  }
-  //Bắt buộc phải chọn trường breed
-  if (breedInput.value === "Select Breed") {
-    alert("Please select breed!");
-  }
-};
-
-//Hàm hiển thị danh sách thú cưng
-function renderTable(data) {
-  table.innerHTML = "";
-  const row = document.createElement("tr");
-  row.innerHTML = `
-  <tr>
-  <th scope="row">${data.id}</th>
-  <td>${data.name}</td>
-  <td>${data.age}</td>
-  <td>${data.type}</td>
-  <td>${data.weight} kg</td>
-  <td>${data.length} cm</td>
-  <td>${data.breed}</td>
-  <td>
-    <i class="bi bi-square-fill" style="color: ${data.color}"></i>
-  </td>
-  <td><i class="bi bi-check-circle-fill"></i></td>
-  <td><i class="bi bi-check-circle-fill"></i></td>
-  <td><i class="bi bi-check-circle-fill"></i></td>
-  <td>${data.Date}</td>
-  <td>
-    <button type="button" class="btn btn-danger" conclick="deletePet('${data.id}')">Delete</button>
-  </td>
-</tr>
-<tr>`;
-  tableBodyEl.appendChild(row);
-}
-
-//Clear Input
-const clearInput = () => {
-  idInput.value = "";
-  nameInput.value = "";
-  ageInput.value = "";
-  typeInput.value = "Select Type";
-  weightInput.value = "";
-  lengthInput.value = "";
-  breedInput.value = "Select Breed";
-  vaccinatedInput.checked = false;
-  dewoemedInput.checked = false;
-  sterilizedInput.checked = false;
-};
-
-//Xóa một thú cưng
-const deletePet = (petId) => {
-  if (confirm("Are you sure you want to delete this?")) {
-    //petArr.splice(petId)
-  }
-};
+});
