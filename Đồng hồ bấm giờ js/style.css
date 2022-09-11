@@ -1,0 +1,28 @@
+body {
+  background-color: blueviolet;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+p {
+  text-align: center;
+  font-weight: bold;
+  font-size: 3.5em;
+}
+
+button {
+  color: black;
+  border: solid 1px white;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 18px 10px;
+  width: 180px;
+  margin: 10px;
+  outline: none;
+  margin-left: 12em;
+  position: inline-block;
+}
